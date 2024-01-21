@@ -22,13 +22,13 @@ button:hover {
 
 .cards-grid {
   margin-top: 2rem;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 20px;
 }
 
 .card {
-  height: 200px;
   position: relative;
 
   &__inner {
@@ -45,9 +45,8 @@ button:hover {
   }
 
   &__face {
-    width: 100%;
+    width: clamp(100px, 20vw, 200px);
     height: auto;
-    position: absolute;
     top: 0;
     left: 0;
     display: block;
@@ -56,6 +55,7 @@ button:hover {
 
     &.--front {
       z-index: 2;
+      position: absolute;
     }
 
     &.--back {
@@ -66,5 +66,5 @@ button:hover {
 
 .turns-counter {
   margin-top: 0.5em;
-  font-size: clamp(32px, 6vw, 35px);
+  font-size: clamp(26px, 5vw, 35px);
 }

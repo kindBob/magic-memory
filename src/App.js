@@ -36,7 +36,7 @@ function App() {
 
       resetTurn();
     } else {
-      setTimeout(resetTurn, 2000);
+      setTimeout(resetTurn, 1000);
     }
   }, [choiceOne, choiceTwo, cards, disabled]);
 
