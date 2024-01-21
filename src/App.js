@@ -13,14 +13,17 @@ const cardImages = [
 
 function App() {
   const [cards, setCards] = useState([]);
-  const [turns, setTurns] = useState(0);
+  const [turns, setTurns] = useState(null);
   const [choiceOne, setChoiceOne] = useState(null);
   const [choiceTwo, setChoiceTwo] = useState(null);
+  const [disabled, setDisabled] = useState(false);
 
   useEffect(() => {
-    if (!choiceTwo) return;
+    if (!choiceTwo || disabled) return;
 
-    if (choiceOne.name === choiceTwo.name) {
+    setDisabled(true);
+
+    if (choiceOne?.name === choiceTwo?.name) {
       const updatedCards = cards;
 
       updatedCards.forEach((card) => {
@@ -30,13 +33,12 @@ function App() {
       });
 
       setCards(updatedCards);
-    } else {
-      document.querySelector(`#id-${choiceOne.id}`).classList.remove("--active");
-      document.querySelector(`#id-${choiceTwo.id}`).classList.remove("--active");
-    }
 
-    resetTurn();
-  }, [choiceOne, choiceTwo]);
+      resetTurn();
+    } else {
+      setTimeout(resetTurn, 2000);
+    }
+  }, [choiceOne, choiceTwo, cards, disabled]);
 
   const shuffleCards = () => {
     const shuffledCards = [...cardImages, ...cardImages]
@@ -45,19 +47,22 @@ function App() {
 
     setCards(shuffledCards);
     setTurns(0);
+
+    resetTurn();
   };
 
-  const handleChoice = (card) => {
-    if (choiceOne && card.id !== choiceOne.id) setChoiceTwo(card);
-    else setChoiceOne(card);
+  useEffect(shuffleCards, []);
 
-    document.querySelector(`#id-${card.id}`).classList.add("--active");
+  const handleChoice = (card) => {
+    choiceOne ? setChoiceTwo(card) : setChoiceOne(card);
+
+    setTurns((turns) => turns + 1);
   };
 
   const resetTurn = () => {
     setChoiceOne(null);
     setChoiceTwo(null);
-    setTurns((turns) => turns + 1);
+    setDisabled(false);
   };
 
   return (
@@ -67,9 +72,17 @@ function App() {
 
       <div className="cards-grid">
         {cards.map((card) => (
-          <SingleCard key={card.id} cardProps={card} handleChoice={handleChoice} />
+          <SingleCard
+            key={card.id}
+            card={card}
+            handleChoice={handleChoice}
+            flipped={card.hasOwnProperty("matched") || card === choiceOne || card === choiceTwo}
+            disabled={disabled}
+          />
         ))}
       </div>
+
+      <h2 className="turns-counter">Turns: {turns ?? turns}</h2>
     </div>
   );
 }
